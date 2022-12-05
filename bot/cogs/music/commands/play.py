@@ -29,7 +29,7 @@ class Play(Setup):
         return [await player.node.get_tracks(query)]
 
 
-    @commands.command(aliases=['p', '!'], description='Searches and plays a song from a given query')
+    @commands.command(aliases=['p','!'], description='Searches and plays a song from a given query')
     async def play(self, ctx: commands.Context, *, query: str):
         """ Searches and plays a song from a given query. """
         await ctx.message.delete()
