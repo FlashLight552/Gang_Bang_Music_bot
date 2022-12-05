@@ -157,11 +157,12 @@ class Setup(commands.Cog):
                 try:
                     await msg.edit(embed=embed)
                 except:
+                    if not player.current:
+                        break
                     msg = await ctx.send(embed=embed)
                     self.live_player_dict[ctx.guild.id] = {
                         'msg': msg, 'ctx': ctx}
                     for item in self.command_list.keys():
                         await asyncio.sleep(0.1)
                         await msg.add_reaction(item)
-
             await asyncio.sleep(3)
