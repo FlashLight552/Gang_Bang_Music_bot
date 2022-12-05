@@ -11,12 +11,12 @@ services:
     expose:
       - 1234
 
-    discord_bot:
-      build: 
-        context: ./bot
-        dockerfile: Dockerfile 
-      container_name: gang_bang_music
-      restart: always
+  discord_bot:
+    build: 
+      context: ./bot
+      dockerfile: Dockerfile 
+    container_name: gang_bang_music
+    restart: always
 
 networks:
   default:
