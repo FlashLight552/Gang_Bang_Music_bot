@@ -166,5 +166,5 @@ class Setup(commands.Cog):
                         await asyncio.sleep(0.1)
                         try:
                             await msg.add_reaction(item)
-                        except: break
+                        except: pass
             await asyncio.sleep(3)
