@@ -164,5 +164,7 @@ class Setup(commands.Cog):
                         'msg': msg, 'ctx': ctx}
                     for item in self.command_list.keys():
                         await asyncio.sleep(0.1)
-                        await msg.add_reaction(item)
+                        try:
+                            await msg.add_reaction(item)
+                        except: break
             await asyncio.sleep(3)
