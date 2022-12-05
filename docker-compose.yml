@@ -1,0 +1,24 @@
+version: "3"
+
+services:
+  lavalink:
+    image: fredboat/lavalink:dev
+    container_name: music-lavalink
+    hostname: lavalink
+    restart: unless-stopped
+    volumes:
+      - ./lavalink/application.yml:/opt/Lavalink/application.yml:ro
+    expose:
+      - 1234
+
+    discord_bot:
+      build: 
+        context: ./bot
+        dockerfile: Dockerfile 
+      container_name: gang_bang_music
+      restart: always
+
+  networks:
+    default:
+      external:
+        name: nginx-networks

@@ -1,0 +1,4 @@
+discord.py[voice]==2.0.1
+lavalink==4.0.3
+requests==2.28.1
+python-dotenv==0.21.0
