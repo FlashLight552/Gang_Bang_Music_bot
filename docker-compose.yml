@@ -18,7 +18,7 @@ services:
       container_name: gang_bang_music
       restart: always
 
-  networks:
-    default:
-      external:
-        name: nginx-networks
+networks:
+  default:
+    external:
+      name: nginx-networks
