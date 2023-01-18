@@ -7,8 +7,10 @@ from .commands.seek import Seek
 from .commands.skip import Skip
 from .commands.stop import Stop
 from .commands.nightcore import Nightcore
+from .commands.repeat import Repeat
+from .commands.shuffle import Shuffle
 
-class MusicPlayer(Disconnect, Pause, Play, Queue, Reactions, Seek, Skip, Stop, Nightcore):
+class MusicPlayer(Disconnect, Pause, Play, Queue, Reactions, Seek, Skip, Stop, Nightcore, Repeat, Shuffle):
     def __init__(self, bot):
         super().__init__(bot)
 

@@ -14,7 +14,6 @@ class Reactions(Setup):
             user = self.bot.get_user(payload.user_id)
             emoji = payload.emoji
 
-
             if not user.bot:
                 player = self.bot.lavalink.player_manager.get(payload.guild_id)
                 voice_channel = self.bot.get_channel(player.channel_id)

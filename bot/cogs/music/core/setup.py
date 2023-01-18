@@ -29,6 +29,8 @@ class Setup(commands.Cog):
             '⏹️': self.stop_btn,
             '⏩': self.fast_forward,
             '⏭️': self.skip_btn,
+            '🔁': self.repeat_btn,
+            '🔀': self.shuffle_btn,
             '💜': self.nightcore_btn,
         }
 
@@ -112,6 +114,8 @@ class Setup(commands.Cog):
                 duration = player.current.duration
                 position = player.position
                 track = player.current
+                loop = player.loop
+                shuffle = player.shuffle
             except:
                 break
 
@@ -134,8 +138,17 @@ class Setup(commands.Cog):
                 track_current_position = time.strftime(
                     '%M:%S', time.gmtime(position/1000))
 
-            progress_bar += f' `{track_current_position}`/`{track_duration}`\n'
+            loop_status = {0: '❌', 1:'single ✅', 2:'queue ✅'}
+            shuffle_status = {False:'❌', True:'✅'}
+            progress_bar += f" `{track_current_position}`/`{track_duration}`\n\n"\
+                        f"*Repeat: {loop_status[loop]}* | "\
+                        f"*Shuffle:* {shuffle_status[shuffle]}"
+            
 
+
+
+            
+            
             yt_thumbnail = f'https://img.youtube.com/vi/{track.identifier}/maxresdefault.jpg'
             title, description = await self.queue(ctx.guild.id)
 
