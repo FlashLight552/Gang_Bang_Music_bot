@@ -104,6 +104,10 @@ class Setup(commands.Cog):
             await self.end_play(guild_id)
 
     async def end_play(self, guild_id):
+        player = self.bot.lavalink.player_manager.get(guild_id)
+        player.set_shuffle(False)
+        player.set_loop(0)
+
         await self.live_player_dict[guild_id]['msg'].delete()
         del self.live_player_dict[guild_id]
 

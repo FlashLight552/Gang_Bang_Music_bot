@@ -15,5 +15,8 @@ class Disconnect(Setup):
             return await ctx.send('You\'re not in my voicechannel!')
 
         player.queue.clear()
+        player.set_shuffle(False)
+        player.set_loop(0)
+
         await player.stop()
         await ctx.voice_client.disconnect(force=True)
