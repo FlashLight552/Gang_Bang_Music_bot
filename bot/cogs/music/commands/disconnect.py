@@ -5,14 +5,14 @@ from ..core.setup import Setup
 
 class Disconnect(Setup):
     @commands.command(aliases=['dc'], description='Disconnects the player from the voice channel')
-    async def disconnect(self, ctx: commands.Context):
+    async def disconnect(self, ctx: commands.Context, without_user = False):
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
+        if without_user == False:
+            if not ctx.voice_client:
+                return await ctx.send('Not connected.')
 
-        if not ctx.voice_client:
-            return await ctx.send('Not connected.')
-
-        if not ctx.author.voice or (player.is_connected and ctx.author.voice.channel.id != int(player.channel_id)):
-            return await ctx.send('You\'re not in my voicechannel!')
+            if not ctx.author.voice or (player.is_connected and ctx.author.voice.channel.id != int(player.channel_id)):
+                return await ctx.send('You\'re not in my voicechannel!')
 
         player.queue.clear()
         player.set_shuffle(False)

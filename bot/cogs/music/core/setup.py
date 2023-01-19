@@ -7,6 +7,7 @@ import os
 
 import lavalink
 from .LavalinkVoiceClient import LavalinkVoiceClient
+from lavalink import Timescale
 
 
 class Setup(commands.Cog):
@@ -48,9 +49,6 @@ class Setup(commands.Cog):
         return guild_check
 
     async def cog_after_invoke(self, ctx: commands.Context):
-        # player = self.bot.lavalink.player_manager.get(ctx.guild.id)
-        # print(self.live_player_dict)
-        # if not player.is_playing:
         if ctx.guild.id not in self.live_player_dict:
             self.live_player_dict[ctx.guild.id] = {}
             await self.live_player(ctx)
@@ -105,13 +103,16 @@ class Setup(commands.Cog):
 
     async def end_play(self, guild_id):
         player = self.bot.lavalink.player_manager.get(guild_id)
+        player.queue.clear()
         player.set_shuffle(False)
         player.set_loop(0)
+        await player.remove_filter(Timescale)
 
         await self.live_player_dict[guild_id]['msg'].delete()
         del self.live_player_dict[guild_id]
 
     async def live_player(self, ctx: commands.Context):
+        timeout = 0
         while True:
             player = self.bot.lavalink.player_manager.get(ctx.guild.id)
             try:
@@ -122,7 +123,26 @@ class Setup(commands.Cog):
                 shuffle = player.shuffle
             except:
                 break
+            
+            """Disconnects if not users in vs"""
+            users = []
+            voice_channel = self.bot.get_channel(player.channel_id)
+            members = voice_channel.members
+            for item in members:
+                if item.bot == False:
+                    users.append(item)
+            
+            if not users:
+                timeout += 1
+                # print(f'{ctx.guild} - {timeout}')
+                if  timeout == 30:
+                    await self.disconnect(ctx, without_user=True)
+                    await self.end_play(ctx.guild.id)
+                    break
+            else:
+                timeout = 0
 
+            """Creates live player embed"""
             progress_bar = '▶️'
             parts = duration/12
             for i in range(0, 12):
@@ -147,11 +167,6 @@ class Setup(commands.Cog):
             progress_bar += f" `{track_current_position}`/`{track_duration}`\n\n"\
                         f"*Repeat: {loop_status[loop]}* | "\
                         f"*Shuffle:* {shuffle_status[shuffle]}"
-            
-
-
-
-            
             
             yt_thumbnail = f'https://img.youtube.com/vi/{track.identifier}/maxresdefault.jpg'
             title, description = await self.queue(ctx.guild.id)
