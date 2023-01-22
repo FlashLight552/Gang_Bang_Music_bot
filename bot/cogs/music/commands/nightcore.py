@@ -13,15 +13,18 @@ class Nightcore(Setup):
 
     async def nightcore_btn(self, guild_id, *args):
         player = self.bot.lavalink.player_manager.get(guild_id)
-        if player.get_filter(Timescale) or player.get_filter(Vibrato):
-            await player.remove_filter(Timescale, Vibrato)
+        if player.get_filter(Timescale):
+            await player.remove_filter(Timescale)
         else:
             await player.update_filter(Timescale, speed=1.1, pitch=1.2)
         
     async def slowed_and_reverb(self, guild_id, *args):
         player: DefaultPlayer = self.bot.lavalink.player_manager.get(guild_id)
-        if player.get_filter(Timescale) or player.get_filter(Vibrato):
-            await player.remove_filter(Timescale, Vibrato)
+        if player.get_filter(Timescale):
+            await player.remove_filter(Timescale)
+            try:
+                await player.remove_filter(Vibrato)
+            except: pass
         else:
             await player.update_filter(Timescale, speed=0.95, pitch=0.9)
             await player.update_filter(Vibrato, frequency=0.8, depth=0.4)
