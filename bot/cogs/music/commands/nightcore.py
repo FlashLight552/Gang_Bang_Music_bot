@@ -1,7 +1,8 @@
 from discord.ext import commands
-from lavalink import Timescale
+from lavalink import Timescale, Equalizer, DefaultPlayer, Tremolo, Vibrato
 
 from ..core.setup import Setup
+
 
 
 class Nightcore(Setup):
@@ -17,3 +18,17 @@ class Nightcore(Setup):
         else:
             await player.update_filter(Timescale, speed=1.1, pitch=1.2)
         
+    async def slowed_and_reverb(self, guild_id, *args):
+        player: DefaultPlayer = self.bot.lavalink.player_manager.get(guild_id)
+        if player.get_filter(Timescale):
+            await player.remove_filter(Timescale, Equalizer, Tremolo, Vibrato)
+        else:
+            await player.update_filter(Timescale, speed=0.95, pitch=0.9)
+            await player.update_filter(Vibrato, frequency=0.8, depth=0.4)
+            
+            # await player.update_filter(Equalizer, bands = [(0, 0.1),(1,0.1)])
+            # await player.update_filter(Tremolo, frequency=1, depth=0.8)
+        
+
+            
+

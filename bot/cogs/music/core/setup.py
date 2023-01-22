@@ -7,7 +7,7 @@ import os
 
 import lavalink
 from .LavalinkVoiceClient import LavalinkVoiceClient
-from lavalink import Timescale
+from lavalink import Timescale, Equalizer, Tremolo, Vibrato
 
 
 class Setup(commands.Cog):
@@ -33,6 +33,7 @@ class Setup(commands.Cog):
             '🔁': self.repeat_btn,
             '🔀': self.shuffle_btn,
             '💜': self.nightcore_btn,
+            '💙': self.slowed_and_reverb,
         }
 
     def cog_unload(self):
@@ -106,7 +107,7 @@ class Setup(commands.Cog):
         player.queue.clear()
         player.set_shuffle(False)
         player.set_loop(0)
-        await player.remove_filter(Timescale)
+        await player.remove_filter(Timescale, Equalizer, Tremolo, Vibrato)
 
         await self.live_player_dict[guild_id]['msg'].delete()
         del self.live_player_dict[guild_id]
