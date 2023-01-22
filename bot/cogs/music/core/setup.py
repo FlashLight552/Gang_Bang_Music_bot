@@ -107,7 +107,7 @@ class Setup(commands.Cog):
         player.queue.clear()
         player.set_shuffle(False)
         player.set_loop(0)
-        await player.remove_filter(Timescale, Equalizer, Tremolo, Vibrato)
+        await player.remove_filter(Timescale, Vibrato)
 
         await self.live_player_dict[guild_id]['msg'].delete()
         del self.live_player_dict[guild_id]
