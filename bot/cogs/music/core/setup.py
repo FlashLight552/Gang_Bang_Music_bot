@@ -7,7 +7,6 @@ import os
 
 import lavalink
 from .LavalinkVoiceClient import LavalinkVoiceClient
-from lavalink import Timescale, Equalizer, Tremolo, Vibrato
 
 
 class Setup(commands.Cog):
@@ -72,7 +71,7 @@ class Setup(commands.Cog):
     async def ensure_voice(self, ctx: commands.Context):
         """ This check ensures that the bot and command author are in the same voicechannel. """
         player = self.bot.lavalink.player_manager.create(ctx.guild.id)
-        should_connect = ctx.command.name in ('play', 'bump',)
+        should_connect = ctx.command.name in ('play', 'bump', 'radio', )
 
         if not ctx.author.voice or not ctx.author.voice.channel:
             raise commands.CommandInvokeError('Join a voicechannel first.')

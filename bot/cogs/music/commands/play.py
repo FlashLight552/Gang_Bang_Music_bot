@@ -9,9 +9,10 @@ from ..core.spotify_api import Spotify_api
 
 url_rx = re.compile(r'https?://(?:www\.)?.+')
 sp_url_rx = re.compile("(https?:\/\/)?(www.)?(open.spotify.com\/)?(playlist\/|track\/)")
+yt_url_rx = re.compile('(https:\/\/)?(www.|music.|youtu.|m.)?(youtube.com|be)')
 
 class Play(Setup):
-    async def search(self,query, player, limit=10):
+    async def search(self,query, player, limit=10, radio=False):
         query = query.strip('<>')
 
         if not url_rx.match(query):
@@ -25,17 +26,20 @@ class Play(Setup):
                 list.append(await player.node.get_tracks(f'ytsearch:{item}'))
             return list
         
+        if radio and yt_url_rx.match(query):
+            id = query.split('watch?v=')[1].split('&')[0]
+            query = f'https://music.youtube.com/watch?v={id}&list=RDAMVM{id}'
         
         return [await player.node.get_tracks(query)]
 
 
     @commands.command(aliases=['p','!'], description='Searches and plays a song from a given query')
-    async def play(self, ctx: commands.Context, *, query: str):
+    async def play(self, ctx: commands.Context, radio = False, *, query: str):
         """ Searches and plays a song from a given query. """
         await ctx.message.delete()
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
-        results = await self.search(query, player)
-        
+        results = await self.search(query, player, radio=radio)
+
         if not results or not results[0].tracks:
             nf_msg = await ctx.send('Nothing found!')
             if not player.is_playing and not player.queue:
@@ -88,3 +92,8 @@ class Play(Setup):
 
         if not player.is_playing:
             await player.play()
+
+
+    @commands.command(aliases=['r',], name='radio', description='Starts radio with similar tracks')
+    async def radio(self, ctx: commands.Context, *, query: str):
+        await self.play(ctx, radio=True, query=query)
