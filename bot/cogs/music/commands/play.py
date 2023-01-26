@@ -22,7 +22,7 @@ class Play(Setup):
             sp = Spotify_api(os.environ['sp_cli'], os.environ['sp_cls'])
             query = sp.get_tracks(query,limit)
             if radio:
-                print(query)
+                await asyncio.sleep(0.5)
                 track = await player.node.get_tracks(f'ytsearch:{query[0]}')
                 id = (track.tracks[0].identifier)
                 query = f'https://music.youtube.com/watch?v={id}&list=RDAMVM{id}'
