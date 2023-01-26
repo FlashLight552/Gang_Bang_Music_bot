@@ -21,15 +21,22 @@ class Play(Setup):
         if sp_url_rx.match(query):
             sp = Spotify_api(os.environ['sp_cli'], os.environ['sp_cls'])
             query = sp.get_tracks(query,limit)
-            list = []
-            for item in query:
-                list.append(await player.node.get_tracks(f'ytsearch:{item}'))
-            return list
+            if radio:
+                track = await player.node.get_tracks(f'ytsearch:{query[0]}')
+                id = (track.tracks[0].identifier)
+                query = f'https://music.youtube.com/watch?v={id}&list=RDAMVM{id}'
+                return [await player.node.get_tracks(query)]
+            else:
+                list = []
+                for item in query:
+                    list.append(await player.node.get_tracks(f'ytsearch:{item}'))
+                return list
         
         if radio: 
             if yt_url_rx.match(query):
                 id = query.split('watch?v=')[1].split('&')[0]
                 query = f'https://music.youtube.com/watch?v={id}&list=RDAMVM{id}'
+
             
             if not url_rx.match(query):
                 track = await player.node.get_tracks(query)
