@@ -14,10 +14,10 @@ yt_url_rx = re.compile('(https:\/\/)?(www.|music.|youtu.|m.)?(youtube.com|be)')
 class Play(Setup):
     async def search(self,query, player, limit=10, radio=False):
         query = query.strip('<>')
-
+        
         if not url_rx.match(query):
             query = f'ytsearch:{query}'
-        
+
         if sp_url_rx.match(query):
             sp = Spotify_api(os.environ['sp_cli'], os.environ['sp_cls'])
             query = sp.get_tracks(query,limit)
@@ -26,15 +26,22 @@ class Play(Setup):
                 list.append(await player.node.get_tracks(f'ytsearch:{item}'))
             return list
         
-        if radio and yt_url_rx.match(query):
-            id = query.split('watch?v=')[1].split('&')[0]
-            query = f'https://music.youtube.com/watch?v={id}&list=RDAMVM{id}'
+        if radio: 
+            if yt_url_rx.match(query):
+                id = query.split('watch?v=')[1].split('&')[0]
+                query = f'https://music.youtube.com/watch?v={id}&list=RDAMVM{id}'
+            
+            if not url_rx.match(query):
+                track = await player.node.get_tracks(query)
+                id= (track.tracks[0].identifier)
+                query = f'https://music.youtube.com/watch?v={id}&list=RDAMVM{id}'
+        
         
         return [await player.node.get_tracks(query)]
 
 
     @commands.command(aliases=['p','!'], description='Searches and plays a song from a given query')
-    async def play(self, ctx: commands.Context, radio = False, *, query: str):
+    async def play(self, ctx: commands.Context, *, query: str, radio = False):
         """ Searches and plays a song from a given query. """
         await ctx.message.delete()
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
