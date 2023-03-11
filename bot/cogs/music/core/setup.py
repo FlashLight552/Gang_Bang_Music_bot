@@ -125,22 +125,26 @@ class Setup(commands.Cog):
                 break
             
             """Disconnects if not users in vs"""
-            users = []
-            voice_channel = self.bot.get_channel(player.channel_id)
-            members = voice_channel.members
-            for item in members:
-                if item.bot == False:
-                    users.append(item)
-            
-            if not users:
-                timeout += 1
-                # print(f'{ctx.guild} - {timeout}')
-                if  timeout == 30:
-                    await self.disconnect(ctx, without_user=True)
-                    await self.end_play(ctx.guild.id)
-                    break
-            else:
-                timeout = 0
+            try:
+                users = []
+                voice_channel = self.bot.get_channel(player.channel_id)
+                members = voice_channel.members
+                for item in members:
+                    if item.bot == False:
+                        users.append(item)
+                
+                if not users:
+                    timeout += 1
+                    # print(f'{ctx.guild} - {timeout}')
+                    if  timeout == 30:
+                        await self.disconnect(ctx, without_user=True)
+                        await self.end_play(ctx.guild.id)
+                        break
+                else:
+                    timeout = 0
+            except:
+                await self.disconnect(ctx, without_user=True)
+                await self.end_play(ctx.guild.id)
 
             """Creates live player embed"""
             progress_bar = '▶️'
