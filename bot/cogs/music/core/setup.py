@@ -76,7 +76,6 @@ class Setup(commands.Cog):
             except:
                 pass
             
-
     async def ensure_voice(self, ctx: commands.Context):
         """ This check ensures that the bot and command author are in the same voicechannel. """
         player = self.bot.lavalink.player_manager.create(ctx.guild.id)
@@ -125,8 +124,7 @@ class Setup(commands.Cog):
     async def live_player(self, ctx: commands.Context):
         timeout = 0
         while True:
-            
-            player = self.bot.lavalink.player_manager.get(ctx.guild.id)
+            player: lavalink.DefaultPlayer = self.bot.lavalink.player_manager.get(ctx.guild.id)
             try:
                 duration = player.current.duration
                 position = player.position
