@@ -62,11 +62,20 @@ class Setup(commands.Cog):
     async def cog_command_error(self, ctx: commands.Context, error):
         if isinstance(error, commands.CommandInvokeError):
             msg = await ctx.send(error.original)
+            
+            player: lavalink.DefaultPlayer = self.bot.lavalink.player_manager.get(ctx.guild.id) 
+            if not player.queue:
+                
+                    await self.disconnect(ctx, without_user=True)
+                    await self.end_play(ctx.guild.id)
+                
+
             await asyncio.sleep(15)
             try:
                 await msg.delete()
             except:
                 pass
+            
 
     async def ensure_voice(self, ctx: commands.Context):
         """ This check ensures that the bot and command author are in the same voicechannel. """
@@ -102,18 +111,21 @@ class Setup(commands.Cog):
             await self.end_play(guild_id)
 
     async def end_play(self, guild_id):
-        player = self.bot.lavalink.player_manager.get(guild_id)
+        player: lavalink.DefaultPlayer = self.bot.lavalink.player_manager.get(guild_id)
         player.queue.clear()
         player.set_shuffle(False)
         player.set_loop(0)
         await player.clear_filters()
 
-        await self.live_player_dict[guild_id]['msg'].delete()
+        try:
+            await self.live_player_dict[guild_id]['msg'].delete()
+        except: pass
         del self.live_player_dict[guild_id]
 
     async def live_player(self, ctx: commands.Context):
         timeout = 0
         while True:
+            
             player = self.bot.lavalink.player_manager.get(ctx.guild.id)
             try:
                 duration = player.current.duration
@@ -145,6 +157,7 @@ class Setup(commands.Cog):
             except:
                 await self.disconnect(ctx, without_user=True)
                 await self.end_play(ctx.guild.id)
+
 
             """Creates live player embed"""
             progress_bar = '▶️'
