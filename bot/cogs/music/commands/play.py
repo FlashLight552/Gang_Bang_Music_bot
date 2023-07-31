@@ -59,9 +59,9 @@ class Play(Setup):
             nf_msg = await ctx.send('Nothing found!')
             if not player.is_playing and not player.queue:
                 await self.disconnect(ctx)
+                await self.end_play(ctx.guild.id)
 
-            await asyncio.sleep(15)
-            return await nf_msg.delete()
+            return await nf_msg.delete(delay=15)
 
         # Valid loadTypes are:
         #   TRACK_LOADED    - single video/direct URL)

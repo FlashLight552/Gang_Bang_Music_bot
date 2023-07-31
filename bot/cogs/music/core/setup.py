@@ -50,8 +50,10 @@ class Setup(commands.Cog):
 
     async def cog_after_invoke(self, ctx: commands.Context):
         if ctx.guild.id not in self.live_player_dict:
-            self.live_player_dict[ctx.guild.id] = {}
-            await self.live_player(ctx)
+            player = self.bot.lavalink.player_manager.get(ctx.guild.id)
+            if player.is_playing or player.queue:
+                self.live_player_dict[ctx.guild.id] = {}
+                await self.live_player(ctx)
 
     async def convert_millis(self, millis):
         seconds = int((millis/1000) % 60)
@@ -117,9 +119,13 @@ class Setup(commands.Cog):
         await player.clear_filters()
 
         try:
-            await self.live_player_dict[guild_id]['msg'].delete()
+            await self.live_player_dict[guild_id]['msg'].delete() 
         except: pass
-        del self.live_player_dict[guild_id]
+
+        try:
+            del self.live_player_dict[guild_id]
+        except: pass
+
 
     async def live_player(self, ctx: commands.Context):
         timeout = 0
