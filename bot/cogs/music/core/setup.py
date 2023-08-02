@@ -17,8 +17,10 @@ class Setup(commands.Cog):
         if not hasattr(bot, 'lavalink'):
             bot.lavalink = lavalink.Client(bot.user.id)
             # Host, Port, Password, Region, Name
+
             bot.lavalink.add_node(
-                os.environ['lavalink_ip'], os.environ['lavalink_port'], os.environ['lavalink_pass'], 'ua', 'default-node')
+                os.environ['lavalink_ip'], os.environ['lavalink_port'], os.environ['lavalink_pass'], 'ua', 'main')
+    
 
         lavalink.add_event_hook(self.track_hook)
 

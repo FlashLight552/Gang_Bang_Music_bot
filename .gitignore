@@ -153,3 +153,4 @@ cython_debug/
 #.idea/
 lavalink/Lavalink.jar
 lavalink/logs/spring.log.2023-07-30.0.gz
+lavalink/logs/spring.log.2023-07-31.0.gz

@@ -2,6 +2,7 @@ from discord.ext import commands
 import re
 import os
 import asyncio
+import lavalink
 
 from ..core.setup import Setup
 from ..core.spotify_api import Spotify_api
@@ -52,6 +53,7 @@ class Play(Setup):
     async def play(self, ctx: commands.Context, *, query: str, radio = False):
         """ Searches and plays a song from a given query. """
         await ctx.message.delete()
+        print(lavalink.NodeManager())
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
         results = await self.search(query, player, radio=radio)
 
@@ -59,7 +61,7 @@ class Play(Setup):
             nf_msg = await ctx.send('Nothing found!')
             if not player.is_playing and not player.queue:
                 await self.disconnect(ctx)
-                await self.end_play(ctx.guild.id)
+                # await self.end_play(ctx.guild.id)
 
             return await nf_msg.delete(delay=15)
 
@@ -94,8 +96,7 @@ class Play(Setup):
 
         if not results or not results[0].tracks:
             nf_msg = await ctx.send('Nothing found!')
-            await asyncio.sleep(15)
-            return await nf_msg.delete()
+            return await nf_msg.delete(delay=15)
         
         queue = list(player.queue)
         queue.insert(0, results[0].tracks[0])
