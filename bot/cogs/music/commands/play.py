@@ -2,7 +2,6 @@ from discord.ext import commands
 import re
 import os
 import asyncio
-import lavalink
 
 from ..core.setup import Setup
 from ..core.spotify_api import Spotify_api
@@ -53,7 +52,6 @@ class Play(Setup):
     async def play(self, ctx: commands.Context, *, query: str, radio = False):
         """ Searches and plays a song from a given query. """
         await ctx.message.delete()
-        print(lavalink.NodeManager())
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
         results = await self.search(query, player, radio=radio)
 
