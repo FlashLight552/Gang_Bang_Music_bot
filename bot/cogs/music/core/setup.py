@@ -128,7 +128,6 @@ class Setup(commands.Cog):
             del self.live_player_dict[guild_id]
         except: pass
 
-
     async def live_player(self, ctx: commands.Context):
         timeout = 0
         while True:
