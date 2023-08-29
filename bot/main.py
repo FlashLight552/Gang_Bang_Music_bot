@@ -25,8 +25,8 @@ async def on_ready():
     await bot.change_presence(activity=discord.Game('with your pussy ^_^'))
 
 @bot.event
-async def on_member_join(member):
-    role = get(member.guild.roles, name='Потанцивальные кОбаны')
+async def on_member_join(member: discord.Member):
+    role = get(member.guild.roles, id=os.environ["on_member_join_role"])
     await member.add_roles(role)
 
 bot.run(os.environ['discord_token'])
