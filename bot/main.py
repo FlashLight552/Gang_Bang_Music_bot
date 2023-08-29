@@ -26,7 +26,7 @@ async def on_ready():
 
 @bot.event
 async def on_member_join(member: discord.Member):
-    role = get(member.guild.roles, id=os.environ["on_member_join_role"])
+    role = get(member.guild.roles, id=int(os.environ["on_member_join_role"]))
     await member.add_roles(role)
 
 bot.run(os.environ['discord_token'])
