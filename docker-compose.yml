@@ -6,7 +6,7 @@ services:
     container_name: music-lavalink
     restart: unless-stopped
     volumes:
-      - ./lavalink/application.yml:/opt/Lavalink/application.yml:ro
+      - ./lavalink_server/application.yml:/opt/Lavalink/application.yml:ro
     expose:
       - 1234
 
