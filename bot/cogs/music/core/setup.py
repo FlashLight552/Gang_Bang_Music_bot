@@ -6,6 +6,7 @@ import time
 import os
 
 import lavalink
+
 from .LavalinkVoiceClient import LavalinkVoiceClient
 
 
@@ -16,13 +17,18 @@ class Setup(commands.Cog):
         # This ensures the client isn't overwritten during cog reloads.
         if not hasattr(bot, 'lavalink'):
             bot.lavalink = lavalink.Client(bot.user.id)
+            
             # Host, Port, Password, Region, Name
-
             bot.lavalink.add_node(
-                os.environ['lavalink_ip'], os.environ['lavalink_port'], os.environ['lavalink_pass'], 'ua', 'main')
+                os.environ['lavalink_ip'], 
+                os.environ['lavalink_port'], 
+                os.environ['lavalink_pass'], 
+                'ua',
+                'default-node')
     
+        self.lavalink: lavalink.Client = bot.lavalink
+        self.lavalink.add_event_hooks(self)
 
-        lavalink.add_event_hook(self.track_hook)
 
         self.live_player_dict: dict = {}
         self.command_list = {
@@ -82,7 +88,7 @@ class Setup(commands.Cog):
             
     async def ensure_voice(self, ctx: commands.Context):
         """ This check ensures that the bot and command author are in the same voicechannel. """
-        player = self.bot.lavalink.player_manager.create(ctx.guild.id)
+        player = ctx.bot.lavalink.player_manager.create(ctx.guild.id)
         should_connect = ctx.command.name in ('play', 'bump', 'radio', )
 
         if not ctx.author.voice or not ctx.author.voice.channel:
@@ -132,6 +138,7 @@ class Setup(commands.Cog):
         timeout = 0
         while True:
             player: lavalink.DefaultPlayer = self.bot.lavalink.player_manager.get(ctx.guild.id)
+            
             try:
                 duration = player.current.duration
                 position = player.position
@@ -222,3 +229,4 @@ class Setup(commands.Cog):
                             await msg.add_reaction(item)
                         except: pass
             await asyncio.sleep(3)
+
