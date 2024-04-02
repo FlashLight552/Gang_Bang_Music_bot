@@ -58,21 +58,13 @@ class Play(Setup):
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
         results = await self.search(query, player, radio=radio)
 
-        # if not results or not results[0].tracks:
-        #     nf_msg = await ctx.send('Nothing found!')
-        #     if not player.is_playing and not player.queue:
-        #         await self.disconnect(ctx)
-        #         # await self.end_play(ctx.guild.id)
-
-        #     return await nf_msg.delete(delay=15)
-
         # Valid loadTypes are:
         #   TRACK_LOADED    - single video/direct URL)
         #   PLAYLIST_LOADED - direct URL to playlist)
         #   SEARCH_RESULT   - query prefixed with either ytsearch: or scsearch:.
         #   NO_MATCHES      - query yielded no results
         #   LOAD_FAILED     - most likely, the video encountered an exception during loading.
-
+        
         if results.load_type == LoadType.EMPTY:
             await ctx.send("I couldn'\t find any tracks for that query.", delete_after=15)
             if not player.is_playing and not player.queue:
@@ -84,7 +76,7 @@ class Play(Setup):
             for track in tracks:
                 player.add(requester=ctx.author.id, track=track)
         
-        if results.load_type == LoadType.TRACK:
+        if results.load_type == LoadType.TRACK or results.load_type == LoadType.SEARCH:
             track = results.tracks[0]
             player.add(track=track, requester=ctx.author.id)
 
@@ -99,12 +91,14 @@ class Play(Setup):
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
         results = await self.search(query, player, 1)
 
-        if not results or not results[0].tracks:
-            nf_msg = await ctx.send('Nothing found!')
-            return await nf_msg.delete(delay=15)
+        if results.load_type == LoadType.EMPTY:
+            await ctx.send("I couldn'\t find any tracks for that query.", delete_after=15)
+            if not player.is_playing and not player.queue:
+                await self.disconnect(ctx)
+                await self.end_play(ctx.guild.id)
         
         queue = list(player.queue)
-        queue.insert(0, results[0].tracks[0])
+        queue.insert(0, results.tracks[0])
         
         player.queue.clear()
 
