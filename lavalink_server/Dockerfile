@@ -1,4 +1,4 @@
-FROM azul/zulu-openjdk-alpine:17-jre-headless-latest
+FROM openjdk:17-jdk-alpine
 
 
 # RUN /bin/sh -c apk add --no-cache libgcc # buildkit
@@ -19,6 +19,6 @@ RUN wget https://github.com/ZeyoYT/Lavalink/releases/download/Fixed/Lavalink.jar
 
 # RUN javac Lavalink.jar
 
-CMD ["java" "-jar", "Lavalink.jar"]
+ENTRYPOINT ["java", "-jar", "Lavalink.jar"]
 
 # ENTRYPOINT ["java" "-Djdk.tls.client.protocols=TLSv1.1,TLSv1.2" "-Xmx4G" "-jar" "Lavalink.jar"]
