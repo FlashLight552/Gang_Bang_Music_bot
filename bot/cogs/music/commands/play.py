@@ -3,6 +3,7 @@ import re
 import os
 import asyncio
 from lavalink.server import LoadType
+import lavalink
 
 
 from ..core.setup import Setup
@@ -57,13 +58,13 @@ class Play(Setup):
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
         results = await self.search(query, player, radio=radio)
 
-        if not results or not results[0].tracks:
-            nf_msg = await ctx.send('Nothing found!')
-            if not player.is_playing and not player.queue:
-                await self.disconnect(ctx)
-                # await self.end_play(ctx.guild.id)
+        # if not results or not results[0].tracks:
+        #     nf_msg = await ctx.send('Nothing found!')
+        #     if not player.is_playing and not player.queue:
+        #         await self.disconnect(ctx)
+        #         # await self.end_play(ctx.guild.id)
 
-            return await nf_msg.delete(delay=15)
+        #     return await nf_msg.delete(delay=15)
 
         # Valid loadTypes are:
         #   TRACK_LOADED    - single video/direct URL)
@@ -71,16 +72,19 @@ class Play(Setup):
         #   SEARCH_RESULT   - query prefixed with either ytsearch: or scsearch:.
         #   NO_MATCHES      - query yielded no results
         #   LOAD_FAILED     - most likely, the video encountered an exception during loading.
-        
+
         if results.load_type == LoadType.EMPTY:
-            return await ctx.send("I couldn'\t find any tracks for that query.", delete_after=15)
-        
+            await ctx.send("I couldn'\t find any tracks for that query.", delete_after=15)
+            if not player.is_playing and not player.queue:
+                await self.disconnect(ctx)
+                await self.end_play(ctx.guild.id)
+
         if results.load_type == LoadType.PLAYLIST:
             tracks = results.tracks
-            
             for track in tracks:
                 player.add(requester=ctx.author.id, track=track)
-        else:
+        
+        if results.load_type == LoadType.TRACK:
             track = results.tracks[0]
             player.add(track=track, requester=ctx.author.id)
 
