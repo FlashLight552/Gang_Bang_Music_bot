@@ -23,8 +23,8 @@ class Setup(commands.Cog):
                 os.environ['lavalink_ip'], 
                 os.environ['lavalink_port'], 
                 os.environ['lavalink_pass'], 
-                'ua',
-                'default-node')
+                'Ukraine',
+                'Main-Node')
     
         self.lavalink: lavalink.Client = bot.lavalink
         self.lavalink.add_event_hooks(self)

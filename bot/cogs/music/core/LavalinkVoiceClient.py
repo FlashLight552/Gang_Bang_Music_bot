@@ -1,6 +1,8 @@
 import discord
 import lavalink
 
+import os
+
 
 class LavalinkVoiceClient(discord.VoiceClient):
     """
@@ -19,12 +21,11 @@ class LavalinkVoiceClient(discord.VoiceClient):
         else:
             self.client.lavalink = lavalink.Client(client.user.id)
             self.client.lavalink.add_node(
-                'localhost',
-                7000,
-                'youshallnotpass',
-                'ua',
-                'default-node'
-            )
+                os.environ['lavalink_ip'], 
+                os.environ['lavalink_port'], 
+                os.environ['lavalink_pass'], 
+                'Ukraine',
+                'Main-Node')
             self.lavalink = self.client.lavalink
 
     async def on_voice_server_update(self, data):

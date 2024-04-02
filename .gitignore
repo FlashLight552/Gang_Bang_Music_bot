@@ -160,3 +160,5 @@ lavalink/logs/spring.log.2023-08-01.0.gz
 lavalink/logs/spring.log.2023-08-24.0.gz
 lavalink_server/Lavalink.jar
 .vscode/settings.json
+lavalink_server/plugins/lavasearch-plugin-1.0.0.jar
+/lavalink_server/plugins

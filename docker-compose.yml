@@ -2,13 +2,15 @@ version: "3"
 
 services:
   lavalink:
-    image: fredboat/lavalink:dev
+    build:
+      context: ./lavalink_server
+      dockerfile: Dockerfile
     container_name: music-lavalink
     restart: unless-stopped
-    volumes:
-      - ./lavalink_server/application.yml:/opt/Lavalink/application.yml:ro
+    # volumes:
+    #   - ./lavalink_server/application.yml:/opt/Lavalink/application.yml:ro
     expose:
-      - 1234
+      - 2333
 
   discord_bot:
     build: 
