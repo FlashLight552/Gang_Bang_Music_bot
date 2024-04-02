@@ -2,6 +2,8 @@ from discord.ext import commands
 import re
 import os
 import asyncio
+from lavalink.server import LoadType
+
 
 from ..core.setup import Setup
 from ..core.spotify_api import Spotify_api
@@ -70,16 +72,17 @@ class Play(Setup):
         #   NO_MATCHES      - query yielded no results
         #   LOAD_FAILED     - most likely, the video encountered an exception during loading.
         
-
-        if results[0].load_type == 'PLAYLIST_LOADED':
-            tracks = results[0].tracks
+        if results.load_type == LoadType.EMPTY:
+            return await ctx.send("I couldn'\t find any tracks for that query.", delete_after=15)
+        
+        if results.load_type == LoadType.PLAYLIST:
+            tracks = results.tracks
             
             for track in tracks:
                 player.add(requester=ctx.author.id, track=track)
         else:
-            for i in range(len(results)):
-                result = results[i]
-                player.add(requester=ctx.author.id, track=result.tracks[0])
+            track = results.tracks[0]
+            player.add(track=track, requester=ctx.author.id)
 
         if not player.is_playing:
             await player.play()
