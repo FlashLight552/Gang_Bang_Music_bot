@@ -1,4 +1,4 @@
-FROM azul/zulu-openjdk-alpine:17-jre-headless-latest
+FROM openjdk:23-slim-bullseye
 
 WORKDIR /usr/src/lavalink_server
 
