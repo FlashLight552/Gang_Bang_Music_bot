@@ -213,8 +213,11 @@ class Setup(commands.Cog):
                 msg = await ctx.send(embed=embed)
                 self.live_player_dict[ctx.guild.id] = {'msg': msg, 'ctx': ctx}
                 for item in self.command_list.keys():
-                    await asyncio.sleep(0.15)
-                    await msg.add_reaction(item)
+                    try:
+                        await asyncio.sleep(0.15)
+                        await msg.add_reaction(item)
+                    except discord.errors.NotFound:
+                        break
             else:
                 try:
                     await msg.edit(embed=embed)
