@@ -1,8 +1,16 @@
-FROM openjdk:23-slim
+FROM azul/zulu-openjdk-alpine:17-jre-headless-latest
 
 RUN  apt-get update \
   && apt-get install -y wget \
   && rm -rf /var/lib/apt/lists/*
+
+RUN /bin/sh -c apk add --no-cache libgcc # buildkit
+
+RUN /bin/sh -c addgroup -g 322 -S lavalink && adduser -u 322 -S lavalink lavalink # buildkit
+
+RUN /bin/sh -c chown -R lavalink:lavalink /opt/Lavalink # buildkit
+
+USER lavalink
 
 WORKDIR /usr/src/lavalink_server
 
