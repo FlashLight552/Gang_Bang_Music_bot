@@ -29,7 +29,7 @@ class Play(Setup):
                 track = await player.node.get_tracks(f'ytsearch:{query[0]}')
                 id = (track.tracks[0].identifier)
                 query = f'https://music.youtube.com/watch?v={id}&list=RDAMVM{id}'
-                return [await player.node.get_tracks(query)]
+                return await player.node.get_tracks(query)
             else:
                 list = []
                 for item in query:
