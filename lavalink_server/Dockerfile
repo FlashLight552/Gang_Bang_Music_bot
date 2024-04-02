@@ -12,7 +12,7 @@ RUN wget https://github.com/ZeyoYT/Lavalink/releases/download/Fixed/Lavalink.jar
 
 # RUN mv /usr/src/lavalink_server
 
-RUN javac Lavalink.jar
+# RUN javac Lavalink.jar
 
 CMD ["java", "-jar" "Lavalink.jar"]
 
