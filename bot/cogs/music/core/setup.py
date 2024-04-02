@@ -8,7 +8,7 @@ import os
 import lavalink
 
 from .LavalinkVoiceClient import LavalinkVoiceClient
-
+from lavalink.events import QueueEndEvent
 
 class Setup(commands.Cog):
     def __init__(self, bot):
@@ -28,7 +28,6 @@ class Setup(commands.Cog):
     
         self.lavalink: lavalink.Client = bot.lavalink
         self.lavalink.add_event_hooks(self)
-
 
         self.live_player_dict: dict = {}
         self.command_list = {
@@ -112,10 +111,12 @@ class Setup(commands.Cog):
                 raise commands.CommandInvokeError(
                     'You need to be in my voicechannel.')
 
-    async def track_hook(self, event):
-        if isinstance(event, lavalink.events.QueueEndEvent):
-            guild_id = event.player.guild_id
-            guild = self.bot.get_guild(guild_id)
+    @lavalink.listener(QueueEndEvent)
+    async def track_hook(self, event: QueueEndEvent):
+        guild_id = event.player.guild_id
+        guild = self.bot.get_guild(guild_id)
+
+        if guild is not None:
             await guild.voice_client.disconnect(force=True)
             await self.end_play(guild_id)
 
