@@ -7,7 +7,7 @@ FROM azul/zulu-openjdk-alpine:17-jre-headless-latest
 
 # RUN /bin/sh -c chown -R lavalink:lavalink /opt/Lavalink # buildkit
 
-USER lavalink
+# USER lavalink
 
 WORKDIR /usr/src/lavalink_server
 
