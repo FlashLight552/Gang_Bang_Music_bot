@@ -1,4 +1,4 @@
-FROM openjdk:23-slim-bullseye
+FROM openjdk:23-slim
 
 WORKDIR /usr/src/lavalink_server
 
