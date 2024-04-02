@@ -1,5 +1,9 @@
 FROM openjdk:23-slim
 
+RUN  apt-get update \
+  && apt-get install -y wget \
+  && rm -rf /var/lib/apt/lists/*
+
 WORKDIR /usr/src/lavalink_server
 
 COPY . .
