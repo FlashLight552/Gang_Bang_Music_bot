@@ -3,8 +3,6 @@ import re
 import os
 import asyncio
 from lavalink.server import LoadType
-import lavalink
-
 
 from ..core.setup import Setup
 from ..core.spotify_api import Spotify_api
@@ -17,38 +15,28 @@ yt_url_rx = re.compile('(https:\/\/)?(www.|music.|youtu.|m.)?(youtube.com|be)')
 class Play(Setup):
     async def search(self,query, player, limit=10, radio=False):
         query = query.strip('<>')
-        
-        if not url_rx.match(query):
+
+        # Check if the user input might be a URL. If it isn't, we can Lavalink do a YouTube search for it instead.
+        # SoundCloud searching is possible by prefixing "scsearch:" instead.
+        if not url_rx.match(query) and not radio:
             query = f'ytsearch:{query}'
+            return await player.node.get_tracks(query)
 
-        if sp_url_rx.match(query):
-            sp = Spotify_api(os.environ['sp_cli'], os.environ['sp_cls'])
-            query = sp.get_tracks(query,limit)
-            if radio:
-                await asyncio.sleep(0.5)
-                track = await player.node.get_tracks(f'ytsearch:{query[0]}')
-                id = (track.tracks[0].identifier)
-                query = f'https://music.youtube.com/watch?v={id}&list=RDAMVM{id}'
-                return await player.node.get_tracks(query)
-            else:
-                list = []
-                for item in query:
-                    list.append(await player.node.get_tracks(f'ytsearch:{item}'))
-                return list
+        if radio and not url_rx.match(query):
+            query = f'ytsearch:{query}'
+            track = await player.node.get_tracks(query)
+            id = (track.tracks[0].identifier)
+            query = f'https://music.youtube.com/watch?v={id}&list=RDAMVM{id}'
+            return await player.node.get_tracks(query)
         
-        if radio: 
-            if yt_url_rx.match(query):
-                id = query.split('watch?v=')[1].split('&')[0]
-                query = f'https://music.youtube.com/watch?v={id}&list=RDAMVM{id}'
-
-            
-            if not url_rx.match(query):
-                track = await player.node.get_tracks(query)
-                id= (track.tracks[0].identifier)
-                query = f'https://music.youtube.com/watch?v={id}&list=RDAMVM{id}'
-        
-        
-        return await player.node.get_tracks(query)
+        if radio:
+            track = await player.node.get_tracks(query)
+            title = track.tracks[0].title
+            query = f'ytsearch:{title}'
+            track = await player.node.get_tracks(query)
+            id = (track.tracks[0].identifier)
+            query = f'https://music.youtube.com/watch?v={id}&list=RDAMVM{id}'
+            return await player.node.get_tracks(query)
 
 
     @commands.command(aliases=['p','!'], description='Searches and plays a song from a given query')
