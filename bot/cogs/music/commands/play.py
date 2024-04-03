@@ -38,6 +38,7 @@ class Play(Setup):
             query = f'https://music.youtube.com/watch?v={id}&list=RDAMVM{id}'
             return await player.node.get_tracks(query)
 
+        return await player.node.get_tracks(query)
 
     @commands.command(aliases=['p','!'], description='Searches and plays a song from a given query')
     async def play(self, ctx: commands.Context, *, query: str, radio = False):
