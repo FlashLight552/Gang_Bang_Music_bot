@@ -75,9 +75,9 @@ class Setup(commands.Cog):
     async def cog_command_error(self, ctx: commands.Context, error):
         if isinstance(error, commands.CommandInvokeError):
             await ctx.send(error.original, delete_after= 15)
-            
+
             player: lavalink.DefaultPlayer = self.bot.lavalink.player_manager.get(ctx.guild.id) 
-            if not player.queue:
+            if not player.is_playing and not player.queue:
                 
                     await self.disconnect(ctx, without_user=True)
                     await self.end_play(ctx.guild.id)
