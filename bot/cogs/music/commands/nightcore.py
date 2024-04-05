@@ -25,9 +25,6 @@ class Nightcore(Setup):
         else:
             await player.update_filter(Timescale, speed=0.95, pitch=0.9)
             await player.update_filter(Vibrato, frequency=0.8, depth=0.4)
-            
-            # await player.update_filter(Equalizer, bands = [(0, 0.1),(1,0.1)])
-            # await player.update_filter(Tremolo, frequency=1, depth=0.8)
         
 
             

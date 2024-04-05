@@ -1,35 +1,30 @@
-from discord.ext import commands
 import re
-import os
-import asyncio
+
+import lavalink
 from lavalink.server import LoadType
+from discord.ext import commands
 
 from ..core.setup import Setup
-from ..core.spotify_api import Spotify_api
 
 
 url_rx = re.compile(r'https?://(?:www\.)?.+')
-sp_url_rx = re.compile("(https?:\/\/)?(www.)?(open.spotify.com\/)?(playlist\/|track\/)")
-yt_url_rx = re.compile('(https:\/\/)?(www.|music.|youtu.|m.)?(youtube.com|be)')
+
 
 class Play(Setup):
-    async def search(self,query, player, limit=10, radio=False):
+    async def search(self,query, player: lavalink, radio=False):
         query = query.strip('<>')
 
-        # Check if the user input might be a URL. If it isn't, we can Lavalink do a YouTube search for it instead.
-        # SoundCloud searching is possible by prefixing "scsearch:" instead.
-        if not url_rx.match(query) and not radio:
-            query = f'ytsearch:{query}'
-            return await player.node.get_tracks(query)
-
-        if radio and not url_rx.match(query):
-            query = f'ytsearch:{query}'
-            track = await player.node.get_tracks(query)
-            id = (track.tracks[0].identifier)
-            query = f'https://music.youtube.com/watch?v={id}&list=RDAMVM{id}'
-            return await player.node.get_tracks(query)
-        
+        """Starts radio"""
         if radio:
+            """in track name"""
+            if not url_rx.match(query):
+                query = f'ytsearch:{query}'
+                track = await player.node.get_tracks(query)
+                id = (track.tracks[0].identifier)
+                query = f'https://music.youtube.com/watch?v={id}&list=RDAMVM{id}'
+                return await player.node.get_tracks(query)
+
+            """in track URL"""
             track = await player.node.get_tracks(query)
             title = track.tracks[0].title
             query = f'ytsearch:{title}'
@@ -38,7 +33,14 @@ class Play(Setup):
             query = f'https://music.youtube.com/watch?v={id}&list=RDAMVM{id}'
             return await player.node.get_tracks(query)
 
+        """Starts player in track name"""
+        if not url_rx.match(query):
+            query = f'ytsearch:{query}'
+            return await player.node.get_tracks(query)
+
+        """Starts player in track Url"""
         return await player.node.get_tracks(query)
+
 
     @commands.command(aliases=['p','!'], description='Searches and plays a song from a given query')
     async def play(self, ctx: commands.Context, *, query: str, radio = False):
@@ -47,15 +49,15 @@ class Play(Setup):
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
         results = await self.search(query, player, radio=radio)
 
-        # Valid loadTypes are:
-        #   TRACK_LOADED    - single video/direct URL)
-        #   PLAYLIST_LOADED - direct URL to playlist)
-        #   SEARCH_RESULT   - query prefixed with either ytsearch: or scsearch:.
-        #   NO_MATCHES      - query yielded no results
-        #   LOAD_FAILED     - most likely, the video encountered an exception during loading.
-        
+        # Valid load_types are:
+        #   TRACK    - direct URL to a track
+        #   PLAYLIST - direct URL to playlist
+        #   SEARCH   - query prefixed with either "ytsearch:" or "scsearch:". This could possibly be expanded with plugins.
+        #   EMPTY    - no results for the query (result.tracks will be empty)
+        #   ERROR    - the track encountered an exception during loading
+
         if results.load_type == LoadType.EMPTY:
-            await ctx.send("I couldn'\t find any tracks for that query.", delete_after=15)
+            await ctx.send("I couldn't find any tracks for that query or something went wrong", delete_after=15)
             if not player.is_playing and not player.queue:
                 await self.disconnect(ctx)
                 await self.end_play(ctx.guild.id)

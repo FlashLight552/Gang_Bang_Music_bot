@@ -59,8 +59,12 @@ class Setup(commands.Cog):
         if ctx.guild.id not in self.live_player_dict:
             player = self.bot.lavalink.player_manager.get(ctx.guild.id)
             if player.is_playing or player.queue:
-                self.live_player_dict[ctx.guild.id] = {}
-                await self.live_player(ctx)
+                try:
+                    self.live_player_dict[ctx.guild.id]
+                except KeyError:
+                    self.live_player_dict[ctx.guild.id] = {}
+                    await self.live_player(ctx)
+                    
 
     async def convert_millis(self, millis):
         seconds = int((millis/1000) % 60)
@@ -70,20 +74,13 @@ class Setup(commands.Cog):
 
     async def cog_command_error(self, ctx: commands.Context, error):
         if isinstance(error, commands.CommandInvokeError):
-            msg = await ctx.send(error.original)
+            await ctx.send(error.original, delete_after= 15)
             
             player: lavalink.DefaultPlayer = self.bot.lavalink.player_manager.get(ctx.guild.id) 
             if not player.queue:
                 
                     await self.disconnect(ctx, without_user=True)
                     await self.end_play(ctx.guild.id)
-                
-
-            await asyncio.sleep(15)
-            try:
-                await msg.delete()
-            except:
-                pass
             
     async def ensure_voice(self, ctx: commands.Context):
         """ This check ensures that the bot and command author are in the same voicechannel. """
@@ -121,22 +118,17 @@ class Setup(commands.Cog):
             await self.end_play(guild_id)
 
     async def end_play(self, guild_id):
-        player: lavalink.DefaultPlayer = self.bot.lavalink.player_manager.get(guild_id)
-        player.queue.clear()
-        player.set_shuffle(False)
-        player.set_loop(0)
-        await player.clear_filters()
-
+        await self.lavalink.player_manager.destroy(guild_id)
+        """Deletes live player message"""   
         try:
             await self.live_player_dict[guild_id]['msg'].delete() 
         except: pass
-
+        """Deletes live player data from list"""
         try:
             del self.live_player_dict[guild_id]
         except: pass
 
     async def live_player(self, ctx: commands.Context):
-        timeout = 0
         while True:
             player: lavalink.DefaultPlayer = self.bot.lavalink.player_manager.get(ctx.guild.id)
             
@@ -147,30 +139,13 @@ class Setup(commands.Cog):
                 loop = player.loop
                 shuffle = player.shuffle
             except:
-                break
-            
-            """Disconnects if not users in vs"""
-            try:
-                users = []
-                voice_channel = self.bot.get_channel(player.channel_id)
-                members = voice_channel.members
-                for item in members:
-                    if item.bot == False:
-                        users.append(item)
-                
-                if not users:
-                    timeout += 1
-                    # print(f'{ctx.guild} - {timeout}')
-                    if  timeout == 30:
-                        await self.disconnect(ctx, without_user=True)
-                        await self.end_play(ctx.guild.id)
-                        break
-                else:
-                    timeout = 0
-            except:
                 await self.disconnect(ctx, without_user=True)
                 await self.end_play(ctx.guild.id)
-
+                break
+            
+            """Disconnects if not users in vc"""
+            if await self.dc_if_not_users(ctx, player):
+                break
 
             """Creates live player embed"""
             progress_bar = '▶️'
@@ -209,9 +184,11 @@ class Setup(commands.Cog):
             embed.set_thumbnail(url=yt_thumbnail)
             embed.add_field(name=title, value=description)
 
+            """Creates or edits live player message"""
             if 'msg' not in locals():
                 msg = await ctx.send(embed=embed)
                 self.live_player_dict[ctx.guild.id] = {'msg': msg, 'ctx': ctx}
+                
                 for item in self.command_list.keys():
                     try:
                         await asyncio.sleep(0.15)
@@ -220,7 +197,8 @@ class Setup(commands.Cog):
                         break
             else:
                 try:
-                    await msg.edit(embed=embed)
+                    if self.live_player_dict[ctx.guild.id]['msg'] == msg:
+                        await msg.edit(embed=embed) 
                 except:
                     if not player.current:
                         break
@@ -228,9 +206,28 @@ class Setup(commands.Cog):
                     self.live_player_dict[ctx.guild.id] = {
                         'msg': msg, 'ctx': ctx}
                     for item in self.command_list.keys():
-                        await asyncio.sleep(0.1)
                         try:
+                            await asyncio.sleep(0.15)
                             await msg.add_reaction(item)
-                        except: pass
+                        except discord.errors.NotFound:
+                            break
+            
             await asyncio.sleep(3)
 
+    async def dc_if_not_users(self, ctx: commands.Context, player):
+            try:
+                users = []
+                voice_channel = self.bot.get_channel(player.channel_id)
+                members = voice_channel.members
+                for item in members:
+                    if item.bot == False:
+                        users.append(item)
+                
+                if not users:
+                        await self.disconnect(ctx, without_user=True)
+                        await self.end_play(ctx.guild.id)
+                        return True
+            except:
+                await self.disconnect(ctx, without_user=True)
+                await self.end_play(ctx.guild.id)
+                return True

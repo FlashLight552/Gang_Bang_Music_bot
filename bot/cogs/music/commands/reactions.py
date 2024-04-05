@@ -10,7 +10,10 @@ class Reactions(Setup):
     async def on_raw_reaction_add(self, payload: discord.RawReactionActionEvent):
         if self.live_player_dict and payload.message_id == self.live_player_dict[payload.guild_id]['msg'].id:
             channel = self.bot.get_channel(payload.channel_id)
-            message = await channel.fetch_message(payload.message_id)
+            try:
+                message = await channel.fetch_message(payload.message_id)
+            except discord.errors.NotFound:
+                return
             user = self.bot.get_user(payload.user_id)
             emoji = payload.emoji
 
@@ -18,7 +21,7 @@ class Reactions(Setup):
                 player = self.bot.lavalink.player_manager.get(payload.guild_id)
                 voice_channel = self.bot.get_channel(player.channel_id)
                 members = voice_channel.members
-                members_id = [] #(list)
+                members_id = []
                 for member in members:
                     members_id.append(member.id)
                 
