@@ -8,7 +8,7 @@ from ..core.setup import Setup
 
 
 url_rx = re.compile(r'https?://(?:www\.)?.+')
-yt_url_rx = re.compile('(https:\/\/)?(www.|music.|youtu.|m.)?(youtube.com|be)')
+
 
 class Play(Setup):
     async def search(self,query, player: lavalink, radio=False):
@@ -24,17 +24,12 @@ class Play(Setup):
                 query = f'https://music.youtube.com/watch?v={id}&list=RDAMVM{id}'
                 return await player.node.get_tracks(query)
 
-            """YOUTUBE URL"""
-            if yt_url_rx.match(query):
-                track = await player.node.get_tracks(query)
-                id = (track.tracks[0].identifier)
-                query = f'https://music.youtube.com/watch?v={id}&list=RDAMVM{id}'
-                return await player.node.get_tracks(query)
-
             """in track URL"""
             track = await player.node.get_tracks(query)
             title = track.tracks[0].title
-            query = f'ytsearch:{title}'
+            author = track.tracks[0].author
+            query = f'ytsearch:{author} - {title}'
+            print(track.tracks)
             track = await player.node.get_tracks(query)
             id = (track.tracks[0].identifier)
             query = f'https://music.youtube.com/watch?v={id}&list=RDAMVM{id}'

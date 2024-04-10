@@ -1,4 +1,17 @@
 plugins:
+  dunctebot:
+      ttsLanguage: "ru-RU" # language of the TTS engine
+      sources:
+          # true = source enabled, false = source disabled
+          getyarn: false # www.getyarn.io
+          clypit: false # www.clyp.it
+          tts: false # speak:Words to speak
+          pornhub: true # should be self-explanatory
+          reddit: true # should be self-explanatory
+          ocremix: false # www.ocremix.org
+          tiktok: true # tiktok.com
+          mixcloud: false # mixcloud.com
+          soundgasm: false # soundgasm.net
   lavasrc:
     providers: # Custom providers for track loading. This is the default
       - 'ytsearch:"%ISRC%"' # If ISRC available, search on youtube
@@ -29,6 +42,9 @@ lavalink:
       repository: "https://maven.topi.wtf/releases"
     - dependency: "com.github.topi314.lavasrc:lavasrc-plugin:4.0.0"
       repository: "https://maven.topi.wtf/releases"
+    - dependency: "com.dunctebot:skybot-lavalink-plugin:1.6.3"
+      repository : "https://maven.lavalink.dev/releases" # (optional on lavalink 4)
+      snapshot: false # (optional, tells lavalink to use the default snaptshot repository instead)
   server:
     password: "maybeiwasboring"
     sources:
