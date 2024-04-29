@@ -1,4 +1,7 @@
 plugins:
+  youtube:
+    enabled: true
+    clients: ["MUSIC", "ANDROID", "WEB"]
   dunctebot:
       ttsLanguage: "ru-RU" # language of the TTS engine
       sources:
@@ -24,7 +27,7 @@ plugins:
       deezer: false # Enable Deezer source
       yandexmusic: true # Enable Yandex Music source
       flowerytts: false # Enable Flowery TTs source
-      youtube: true # Enable YouTube search source (https://github.com/topi314/LavaSearch)
+      youtube: false # Enable YouTube search source (https://github.com/topi314/LavaSearch)
     spotify:
       clientId: "b458566df412473d800daacdd5937e8f"
       clientSecret: "1b5aedea6eb04358aaebee7d76047f80"
@@ -45,10 +48,12 @@ lavalink:
     - dependency: "com.dunctebot:skybot-lavalink-plugin:1.6.3"
       repository : "https://maven.lavalink.dev/releases" # (optional on lavalink 4)
       snapshot: false # (optional, tells lavalink to use the default snaptshot repository instead)
+    - dependency: "com.github.lavalink-devs.lavaplayer-youtube-source:plugin:1.0.5"
+      repository: "https://jitpack.io"
   server:
     password: "maybeiwasboring"
     sources:
-      youtube: true
+      youtube: false
       bandcamp: true
       soundcloud: true
       twitch: true

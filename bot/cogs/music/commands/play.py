@@ -18,7 +18,7 @@ class Play(Setup):
         if radio:
             """in track name"""
             if not url_rx.match(query):
-                query = f'ytsearch:{query}'
+                query = f'ytmsearch:{query}'
                 track = await player.node.get_tracks(query)
                 id = (track.tracks[0].identifier)
                 query = f'https://music.youtube.com/watch?v={id}&list=RDAMVM{id}'
@@ -28,7 +28,7 @@ class Play(Setup):
             track = await player.node.get_tracks(query)
             title = track.tracks[0].title
             author = track.tracks[0].author
-            query = f'ytsearch:{author} - {title}'
+            query = f'ytmsearch:{author} - {title}'
             print(track.tracks)
             track = await player.node.get_tracks(query)
             id = (track.tracks[0].identifier)
@@ -37,7 +37,7 @@ class Play(Setup):
 
         """Starts player in track name"""
         if not url_rx.match(query):
-            query = f'ytsearch:{query}'
+            query = f'ytmsearch:{query}'
             return await player.node.get_tracks(query)
 
         """Starts player in track Url"""
