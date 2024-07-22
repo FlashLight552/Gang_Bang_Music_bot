@@ -1,27 +1,12 @@
 version: "3"
 
 services:
-  # lavalink:
-  #   build:
-  #     context: ./lavalink_server
-  #     dockerfile: Dockerfile
-  #   container_name: music-lavalink
-  #   restart: unless-stopped
-  #   expose:
-  #     - 2333
-
   lavalink:
-    image: ghcr.io/lavalink-devs/lavalink:4
-    container_name: lavalink
+    build:
+      context: ./lavalink_server
+      dockerfile: Dockerfile
+    container_name: music-lavalink
     restart: unless-stopped
-    environment:
-      # set Java options here
-      - _JAVA_OPTIONS=-Xmx6G
-      # set lavalink server port
-      - SERVER_PORT=2333
-    volumes:
-      - ./lavalink_server/application.yml:/opt/Lavalink/application.yml
-      - ./lavalink_server/plugins/:/opt/Lavalink/plugins/
     expose:
       - 2333
 
@@ -35,6 +20,8 @@ services:
       - lavalink
 
 networks:
-  default:
-    external:
-      name: nginx-networks
+   ip6net:
+     enable_ipv6: true
+     ipam:
+       config:
+         - subnet: 2001:db8::/64
