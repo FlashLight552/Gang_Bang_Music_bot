@@ -10,6 +10,7 @@ services:
     expose:
       - 2333
 
+
   discord_bot:
     build: 
       context: ./bot
@@ -20,8 +21,6 @@ services:
       - lavalink
 
 networks:
-   ip6net:
-     enable_ipv6: true
-     ipam:
-       config:
-         - subnet: 2001:db8::/64
+  default:
+    external:
+      name: nginx-networks
