@@ -17,7 +17,9 @@ class LavalinkVoiceClient(discord.VoiceClient):
         self.channel = channel
         # ensure a client already exists
         if hasattr(self.client, 'lavalink'):
-            self.lavalink = self.client.lavalink
+            self.lavalink:lavalink = self.client.lavalink
+            print(self.lavalink.node_manager.available_nodes)
+
         else:
             self.client.lavalink = lavalink.Client(client.user.id)
             self.client.lavalink.add_node(

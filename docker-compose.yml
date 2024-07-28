@@ -1,15 +1,14 @@
 version: "3"
 
 services:
-  lavalink:
-    build:
-      context: ./lavalink_server
-      dockerfile: Dockerfile
-    container_name: music-lavalink
-    restart: unless-stopped
-    expose:
-      - 2333
-
+#   lavalink:
+#     build:
+#       context: ./lavalink_server
+#       dockerfile: Dockerfile
+#     container_name: music-lavalink
+#     restart: unless-stopped
+#     expose:
+#       - 2333
 
   discord_bot:
     build: 

@@ -9,18 +9,30 @@ import lavalink
 
 from .LavalinkVoiceClient import LavalinkVoiceClient
 from lavalink.events import QueueEndEvent
+from .lavalink_server_parser import lavalink_server_parser
 
 class Setup(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+        self.server_list = lavalink_server_parser()
 
         # This ensures the client isn't overwritten during cog reloads.
         if not hasattr(bot, 'lavalink'):
             bot.lavalink = lavalink.Client(bot.user.id)
             
             # Host, Port, Password, Region, Name
+            
+            # for item in (self.server_list):
+            #     bot.lavalink.add_node(
+            #         self.server_list[item]['host'],
+            #         self.server_list[item]['port'],
+            #         self.server_list[item]['password'],
+            #         'Ukraine',
+            #         self.server_list[item]['host'])
+
+        
             bot.lavalink.add_node(
-                os.environ['lavalink_ip'], 
+                os.environ['lavalink_ip'],
                 os.environ['lavalink_port'], 
                 os.environ['lavalink_pass'], 
                 'Ukraine',
