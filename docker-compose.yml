@@ -16,8 +16,8 @@ services:
       dockerfile: Dockerfile 
     container_name: gang_bang_music
     restart: always
-    depends_on:
-      - lavalink
+    # depends_on:
+    #   - lavalink
 
 networks:
   default:
