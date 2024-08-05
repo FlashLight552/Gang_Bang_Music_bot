@@ -1,14 +1,14 @@
 version: "3"
 
 services:
-  lavalink:
-    build:
-      context: ./lavalink_server
-      dockerfile: Dockerfile
-    container_name: music-lavalink
-    restart: unless-stopped
-    expose:
-      - 2333
+  # lavalink:
+  #   build:
+  #     context: ./lavalink_server
+  #     dockerfile: Dockerfile
+  #   container_name: music-lavalink
+  #   restart: unless-stopped
+  #   expose:
+  #     - 2333
 
   discord_bot:
     build: 
@@ -16,8 +16,8 @@ services:
       dockerfile: Dockerfile 
     container_name: gang_bang_music
     restart: always
-    depends_on:
-      - lavalink
+    # depends_on:
+    #   - lavalink
 
 networks:
   default:
