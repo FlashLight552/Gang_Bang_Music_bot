@@ -22,4 +22,4 @@ services:
 networks:
   default:
     external:
-      name: ip6net
+      name: nginx-networks  
